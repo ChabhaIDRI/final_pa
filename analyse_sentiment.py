@@ -9,28 +9,35 @@ import matplotlib.pyplot as plt
 # charger les données -> fichier csv qui contient des tweets et labels
 
 tweets_df = pd.read_csv('twitter.csv')
+tweets_df.head(3)
 
 # informations sur notre df, 3 colonnes : id, tweet, label
 
 tweets_df.info()
 tweets_df.describe()
 
-## positive = tweets_df[tweets_df['label']==0]
-## negative = tweets_df[tweets_df['label']==1]
+## p = tweets_df[tweets_df['label']==0]
+## n = tweets_df[tweets_df['label']==1]
 
-#!pip install WordCloud
+# nettoyer les données
 
-# afficher la ponctuation
+# supprimer la ponctuation
 
 import string
+
+# afficher la ponctuation !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 string.punctuation
 
 exemple ='hi, how are you ?'
-remove_punction = [char for char in exemple if char not in string.punctuation]
-remove_punction_join = ''.join(remove_punction)
+
+# split la phrase en char, on remplace 
+# la ponctuation par des espaces
+ 
+supprimer_ponctuation = [char for char in exemple if char not in string.punctuation]
+supprimer_ponctuation_join = ''.join(supprimer_ponctuation)
 
 
-# charger les stopwords
+# charger les stopwords : les mots en communs, qu'on utilise beaucoup
 
 import nltk 
 nltk.download('stopwords')
@@ -39,21 +46,24 @@ stopwords.words('english')
 
 collect_stopwords=set(stopwords.words('english'))
 
-remove_punction_stopwords = [txt for txt in remove_punction_join.split() if txt.lower() not in stopwords.words('english')]
+supprimer_ponctuation_stopwords = [txt for txt in supprimer_ponctuation_join.split() if txt.lower() not in stopwords.words('english')]
 
 
 def text_clean(text):
-    remove_punction = [char for char in text if char not in string.punctuation]
-    remove_punction_join = ''.join(remove_punction)
-    remove_punction_stopwords = [txt for txt in remove_punction_join.split() if txt.lower() not in stopwords.words('english')]
-    return remove_punction_stopwords
+    supprimer_ponctuation = [char for char in text if char not in string.punctuation]
+    supprimer_ponctuation_join = ''.join(supprimer_ponctuation)
+    supprimer_ponctuation_stopwords = [txt for txt in supprimer_ponctuation_join.split() if txt.lower() not in stopwords.words('english')]
+    return supprimer_ponctuation_stopwords
 
 
+# split les données
 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(tweets_df['tweet'], tweets_df['label'], test_size=0.2)
 
 
+
+# Frequency Inverse Document Frequency
 from sklearn.feature_extraction.text import TfidfVectorizer
 vectorizer = TfidfVectorizer(sublinear_tf=True, encoding='utf-8',
  decode_error='ignore')
@@ -62,34 +72,10 @@ vv = vectorizer.fit(X_train)
 X_train=vectorizer.transform(X_train)
 X_test=vectorizer.transform(X_test)
 
-
-
 X = vv
 y = tweets_df['label']
 
 
-"""""
-# transformer les données textuelles en vecteurs numériques 
-
-from sklearn.feature_extraction.text import CountVectorizer
-vectorizer = CountVectorizer()
-
-
-countvectorize_tweet = CountVectorizer(analyzer = text_clean, dtype = 'uint8').fit_transform(tweets_df['tweet']).toarray()
-
-X = countvectorize_tweet
-y = tweets_df['label']
-X.shape
-y.shape
-
-
-
-# split les données en données d'entrainement et données de test
-
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(countvectorize_tweet, tweets_df['label'], test_size=0.2)
-
-"""
 # utiliser le classifieur naive bayes
 
 from sklearn.naive_bayes import MultinomialNB
