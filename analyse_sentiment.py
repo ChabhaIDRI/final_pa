@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 # charger les données -> fichier csv qui contient des tweets et labels
 
-tweets_df = pd.read_csv('twitter.csv')
+tweets_df = pd.read_csv('data.csv')
 tweets_df.head(3)
 
 # informations sur notre df, 3 colonnes : id, tweet, label
@@ -76,17 +76,14 @@ X = vv
 y = tweets_df['label']
 
 
-# utiliser le classifieur naive bayes
+# utiliser le modele de la regression logistique
 
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
+model_lr=LogisticRegression(solver='liblinear')
+model_lr.fit(X_train,y_train)
 
-NB_classify = MultinomialNB()
-NB_classify.fit(X_train, y_train)
-
-# le score du modèle
-
-print("Le score du train : "+str(NB_classify.score(X_train,y_train)))
-print("Le score du test : "+str(NB_classify.score(X_test,y_test)))
+print("Score on training data is: "+str(model_lr.score(X_train,y_train)))
+print("Score on testing data is: "+str(model_lr.score(X_test,y_test)))
 
 # récupérer le fichier du modele entrainé et celui du victor 
 
@@ -94,7 +91,7 @@ import warnings
 import pickle
 warnings.filterwarnings("ignore")
 
-pickle.dump(NB_classify,open('model.pkl','wb'))
+pickle.dump(model_lr,open('model.pkl','wb'))
 model=pickle.load(open('model.pkl','rb'))
 
 pickle.dump(vectorizer,open('victor.pkl','wb'))
