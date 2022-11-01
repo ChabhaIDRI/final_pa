@@ -12,16 +12,16 @@ stopwords=pickle.load(open('stopwords.pkl','rb'))
 
 #dd = pd.DataFrame(victor)
 
-def classify(txt):
+class Tweet_Form(Form):
+    tweet_analyser = TextAreaField('',[validators.DataRequired(),validators.length(min=2)])
+    
+def resultat_rl(txt):
     label = {0: 'negative', 1: 'positive'}
     X = victor.transform([txt])
     y = model.predict(X)[0]
     probabilite = np.max(model.predict_proba(X))
     return label[y], probabilite
 
-
-class Tweet_Form(Form):
-    tweet_analyser = TextAreaField('',[validators.DataRequired(),validators.length(min=2)])
 
 @app.route('/')
 def index():
@@ -33,7 +33,7 @@ def results():
     form = Tweet_Form(request.form)
     if request.method == 'POST' and form.validate():
         tweet = request.form['tweet_analyser']
-        y, proba = classify(tweet)
+        y, probabilite = resultat_rl(tweet)
         return render_template('results.html',content=tweet,prediction=y,probability=round(proba*100, 2))
     return render_template('1_ere_page.html', form=form)
 
