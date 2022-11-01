@@ -34,7 +34,7 @@ def results():
     if request.method == 'POST' and form.validate():
         tweet = request.form['tweet_analyser']
         y, probabilite = resultat_rl(tweet)
-        return render_template('results.html',content=tweet,prediction=y,probability=round(proba*100, 2))
+        return render_template('results.html',content=tweet,prediction=y,probability=round(probabilite*100, 2))
     return render_template('1_ere_page.html', form=form)
 
 if __name__ == '__main__':
