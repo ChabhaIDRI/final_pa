@@ -61,6 +61,10 @@ def text_clean(text):
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(tweets_df['tweet'], tweets_df['label'], test_size=0.2)
 
+#tweets_df ['tweet'] = tweets_df ['tweet'].apply(text_clean)
+#X_train, X_test, y_train, y_test = train_test_split(tweets_df ['tweet'], tweets_df['label'], test_size=0.2)
+
+
 
 
 # Frequency Inverse Document Frequency
@@ -84,6 +88,15 @@ model_lr.fit(X_train,y_train)
 
 print("Score on training data is: "+str(model_lr.score(X_train,y_train)))
 print("Score on testing data is: "+str(model_lr.score(X_test,y_test)))
+
+# matrice de confusion
+
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+
+test = model_lr.predict(X_test)
+matrice_c = confusion_matrix(y_test, test)
+sns.heatmap(matrice_c, annot=True)
 
 # récupérer le fichier du modele entrainé et celui du victor 
 
