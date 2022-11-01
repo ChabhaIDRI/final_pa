@@ -13,7 +13,7 @@ stopwords=pickle.load(open('stopwords.pkl','rb'))
 #dd = pd.DataFrame(victor)
 
 def classify(txt):
-    label = {1: 'negative', 0: 'positive'}
+    label = {0: 'negative', 1: 'positive'}
     X = victor.transform([txt])
     y = model.predict(X)[0]
     probabilite = np.max(model.predict_proba(X))
